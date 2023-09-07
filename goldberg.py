@@ -5,8 +5,8 @@ from re import findall
 import numpy as np
 from math import sqrt, sin, cos, atan, pi
 import random
-import Tkinter
-import ttk
+import tkinter
+from tkinter import ttk
 
 class gvector(defaultdict):
 
@@ -25,7 +25,7 @@ class gvector(defaultdict):
         return sum([cls.decode(s) for s in args],cls.decode("")).encode()
 
     def __add__(self, other):
-        return gvector({k:self[k]+other[k] for k in self.keys()+other.keys() if self[k]+other[k] != 0})
+        return gvector({k:self[k]+other[k] for k in list(self.keys())+list(other.keys()) if self[k]+other[k] != 0})
 
     def __mul__(self, factor):
         return gvector({k:self[k]*factor for k in self.keys()})
@@ -63,10 +63,10 @@ class gnet(dict):
     rlat = atan(2)
     rz = cos(rlat)
     rx = sin(rlat)
-    for k, t in {'B':0, 'C':1, 'D':2, 'E':3, 'F':4}.iteritems():
+    for k, t in {'B':0, 'C':1, 'D':2, 'E':3, 'F':4}.items():
         rlong = 2*pi*t/5
         basis[k] = np.array([rz, rx*sin(rlong), rx*cos(rlong)])
-    for k, op in {'A':'L', 'B':'J', 'C':'K', 'D':'G', 'E':'H', 'F':'I'}.iteritems():
+    for k, op in {'A':'L', 'B':'J', 'C':'K', 'D':'G', 'E':'H', 'F':'I'}.items():
         basis[op] = -basis[k]
 
     def __init__(self, M=1, N=0):
@@ -93,7 +93,7 @@ class gnet(dict):
                 vectors = []
                 if len(X) == 1:
                     # vertex
-                    k = X.keys()[0]
+                    k = list(X.keys())[0]
                     for i in range(len(self.seed[k])):
                         right = self.seed[k][i]
                         left = self.seed[k][i-1]
@@ -223,7 +223,7 @@ class gcanvas():
         self.center = np.array([1.0,1.0])
 
     def run(self):
-        c = Tkinter.Canvas(width=self.width, height=self.height, bg=self.bg)
+        c = tkinter.Canvas(width=self.width, height=self.height, bg=self.bg)
         c.pack()
         c.bind("<Button-1>", self.click1)
         c.bind("<Button-2>", self.click2)
@@ -231,24 +231,24 @@ class gcanvas():
         c.bind("<B2-Motion>", self.drag2)
         c.winfo_toplevel().resizable(0, 0)
 
-        frame = Tkinter.Frame()
+        frame = tkinter.Frame()
 
-        self.player_var = Tkinter.StringVar(c)
+        self.player_var = tkinter.StringVar(c)
         self.player_select = ttk.OptionMenu(frame, self.player_var)
         self.player_var.trace('w', self.set_current_player)
         self.player_select.pack()
 
-        self.verb_var = Tkinter.StringVar(c)
+        self.verb_var = tkinter.StringVar(c)
         self.verb_select = ttk.OptionMenu(frame, self.verb_var)
         self.verb_var.trace('w', self.set_current_verb)
         self.verb_select.pack()
 
         self.get_menus()
 
-        self.undo_button = Tkinter.Button(frame, text="Undo", command=self.undo, state=Tkinter.DISABLED)
+        self.undo_button = tkinter.Button(frame, text="Undo", command=self.undo, state=tkinter.DISABLED)
         self.undo_button.pack()
 
-        c.create_window(0,0,window=frame,anchor=Tkinter.NW)
+        c.create_window(0,0,window=frame,anchor=tkinter.NW)
         frame.pack
 
         self.canvas = c
@@ -260,7 +260,7 @@ class gcanvas():
     def undo(self):
         self.g.undo()
         self.get_menus()
-        if not self.g.undo_stack: self.undo_button['state']=Tkinter.DISABLED
+        if not self.g.undo_stack: self.undo_button['state']=tkinter.DISABLED
         self.draw_all()
 
     def get_menus(self):
@@ -289,8 +289,8 @@ class gcanvas():
             self.canvas.bell()
             self.g.beep = False
 
-        if self.g.undo_stack: self.undo_button['state']=Tkinter.NORMAL
-        if not self.g.undo_stack: self.undo_button['state']=Tkinter.DISABLED
+        if self.g.undo_stack: self.undo_button['state']=tkinter.NORMAL
+        if not self.g.undo_stack: self.undo_button['state']=tkinter.DISABLED
 
         self.get_menus()
 
