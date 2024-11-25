@@ -2,7 +2,7 @@ from goldberg import *
 import random
 import sys
 
-class settlers(game):
+class catan(game):
     def __init__(self, size='small', player_count=3):
         M, N = {'small':(1,1), 'medium':(2,0), 'large':(2,1)}[size]
         game.__init__(self, M, N)
@@ -352,4 +352,4 @@ if __name__ == '__main__':
         if arg in ['small', 'medium', 'large']: size = arg
         elif int(arg) - 1 in range(6): players = int(arg)
         else: raise ValueError("unrecognized argument: " + arg)
-    settlers(size, players).run()
+    catan(size, players).run()
