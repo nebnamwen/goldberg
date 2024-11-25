@@ -4,6 +4,8 @@ from numpy import array
 
 class prohex(game):
     def __init__(self, M=4, N=0):
+        if N > 0 and N != M:
+            raise ValueError("This game doesn't work on chiral boards.")
         game.__init__(self, M, N)
         self.players = ['black', 'white']
         self.verbs = [ verb('stone', 'face', self.stone) ]
@@ -38,4 +40,9 @@ if __name__ == '__main__':
     N = 0
     if len(sys.argv) > 1: M = int(sys.argv[1])
     if len(sys.argv) > 2: N = int(sys.argv[2])
-    prohex(M,N).run()
+    try:
+        G = prohex(M,N)
+    except ValueError as e:
+        print(e)
+    else:
+        G.run()
