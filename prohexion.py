@@ -38,4 +38,4 @@ if __name__ == '__main__':
     N = 0
     if len(sys.argv) > 1: M = int(sys.argv[1])
     if len(sys.argv) > 2: N = int(sys.argv[2])
-    prohex(M).run()
+    prohex(M,N).run()
