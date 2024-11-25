@@ -60,6 +60,7 @@ class gnet(dict):
         }
 
     basis = { 'A': np.array([1,0,0]) }
+    opposite = {}
     rlat = atan(2)
     rz = cos(rlat)
     rx = sin(rlat)
@@ -68,7 +69,9 @@ class gnet(dict):
         basis[k] = np.array([rz, rx*sin(rlong), rx*cos(rlong)])
     for k, op in {'A':'L', 'B':'J', 'C':'K', 'D':'G', 'E':'H', 'F':'I'}.items():
         basis[op] = -basis[k]
-
+        opposite[k] = op
+        opposite[op] = k
+        
     def __init__(self, M=1, N=0):
         dict.__init__(self,{})
 
@@ -79,8 +82,8 @@ class gnet(dict):
         while q:
             p, q, = q, p % q
 
-        L = T/p
-        m, n = M/p, N/p
+        L = T//p
+        m, n = M//p, N//p
 
         done = set()
         doing = set(['A' + str(L)])
@@ -175,6 +178,11 @@ class gnet(dict):
         v = sum([cls.basis[k]*gv[k] for k in gv.keys()])
         return v/np.sqrt(v.dot(v))
 
+    @classmethod
+    def opposite_gv(cls, s):
+        gv = gvector.decode(s)
+        return gvector({ cls.opposite[k]: gv[k] for k in gv }).encode()
+    
     def faces(self):
         return [p for p in self]
 
